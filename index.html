@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Zubalenok Checkout</title>
+
+  <!-- Підключення шрифтів -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500;600;700;800;900&family=Source+Sans+3:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <style>
+    /* =========================================
+       CSS Resets & Базові стилі
+       ========================================= */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Source Sans 3', sans-serif;
+      background-color: #E5E5E5; /* Сірий фон для контрасту, щоб бачити межі блоку 428px */
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .main-wrapper {
+      width: 100%;
+      max-width: 428px;
+      background-color: white;
+      box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+
+    /* =========================================
+       Стилі фінального блоку (s-final)
+       ========================================= */
+    .s-final {
+      width: 100%;
+      position: relative;
+      /* Фонове зображення як в макеті */
+      background: 
+        linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0) 20%),
+        linear-gradient(0deg, #FFF5EF 0%, rgba(255, 245, 239, 0) 30%),
+        url('./images/16.webp') center top / 110% no-repeat;
+      background-color: #FFF5EF; /* Резервний колір */
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow: hidden;
+      /* Задаємо мінімальну висоту, щоб вмістити велике фонове зображення з Кариною */
+      min-height: 950px; 
+      padding-top: 40px;
+    }
+
+    /* Блок "Дякуємо" */
+    .s-final-thanks {
+      width: 380px;
+      background: white;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.15);
+      border-radius: 20px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 40px;
+      z-index: 2;
+    }
+
+    .s-final-thanks-title {
+      color: black;
+      font-size: 20px;
+      font-family: 'Onest', sans-serif;
+      font-weight: 900;
+      text-transform: uppercase;
+      text-align: center;
+    }
+
+    .s-final-thanks-desc {
+      color: rgba(0, 0, 0, 0.60);
+      font-size: 16px;
+      font-family: 'Source Sans 3', sans-serif;
+      font-weight: 400;
+      text-align: center;
+    }
+
+    /* Головні заголовки */
+    .s-final-titles {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      z-index: 2;
+    }
+
+    .s-final-title-black {
+      color: black;
+      font-size: 30px;
+      font-family: 'Onest', sans-serif;
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 1.1;
+      text-align: center;
+    }
+
+    .s-final-title-red {
+      color: #90203B;
+      font-size: 61px;
+      font-family: 'Onest', sans-serif;
+      font-weight: 900;
+      text-transform: uppercase;
+      line-height: 1.1;
+      text-align: center;
+      margin-top: -5px;
+    }
+
+    .s-final-subtitle {
+      text-align: center;
+      font-size: 18px;
+      font-family: 'Source Sans 3', sans-serif;
+      text-transform: uppercase;
+      margin-top: 5px;
+      color: black;
+    }
+
+    .s-final-subtitle .font-regular { font-weight: 400; }
+    .s-final-subtitle .font-bold { font-weight: 700; }
+
+    .s-final-badge {
+      background: #F4E3E2;
+      border-radius: 36px;
+      padding: 8px 20px;
+      color: #7E1B32;
+      font-size: 15px;
+      font-family: 'Onest', sans-serif;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.2px;
+      margin-top: 15px;
+    }
+
+    /* Карточка з пропозицією (фіксуємо внизу) */
+    .s-final-offer-card {
+      width: 100%;
+      background: white;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 24px;
+      z-index: 5;
+      margin-top: 360px; /* Притискає картку до низу контейнера */
+      border-top-left-radius: 32px;
+      border-top-right-radius: 32px;
+      box-shadow: 0px -5px 20px rgba(0,0,0,0.08);
+    }
+
+    /* Рядок ціна + таймер */
+    .s-final-top-row {
+      width: 100%;
+      background: linear-gradient(180deg, #9E2543 0%, #5C1123 100%);
+      border-radius: 20px;
+      padding: 15px 0;
+      display: flex;
+      justify-content: space-evenly;
+      align-items: center;
+    }
+
+    .s-final-vertical-divider {
+      width: 1px;
+      height: 60px;
+      background-color: rgba(255,255,255,0.2);
+    }
+
+    .s-final-price-col, .s-final-timer-col {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .s-final-price-label, .s-final-timer-label {
+      color: white;
+      font-size: 12px;
+      font-family: 'Onest', sans-serif;
+      font-weight: 500;
+      text-transform: uppercase;
+    }
+
+    /* Велика ціна 1€ з лініями */
+    .s-final-price-main {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .s-final-price-val {
+      color: white;
+      font-size: 50px;
+      font-family: 'Onest', sans-serif;
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .s-final-decor {
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+
+    .s-final-decor.left { transform: rotate(180deg); }
+
+    .s-final-decor-dot {
+      width: 4px;
+      height: 4px;
+      border: 1px solid white;
+      transform: rotate(45deg); /* Ромб */
+    }
+
+    .s-final-decor-line {
+      width: 10px;
+      height: 1px;
+      background-color: white;
+    }
+
+    .s-final-price-sub {
+      color: #FFE6ED;
+      font-size: 12px;
+      font-family: 'Onest', sans-serif;
+      font-weight: 400;
+      opacity: 0.8;
+    }
+
+    /* Таймер всередині картки */
+    .s-final-timer-display {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .s-final-timer-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      background: linear-gradient(180deg, rgba(0,0,0,1) 0%, rgba(0,0,0,0.5) 100%);
+      border-radius: 8px;
+      padding: 6px 8px;
+      min-width: 45px;
+    }
+
+    .s-final-timer-box {
+      color: white;
+      font-size: 24px;
+      font-family: 'Onest', sans-serif;
+      font-weight: 700;
+      line-height: 1;
+      background: none;
+      outline: none;
+      border: none;
+    }
+
+    .s-final-timer-unit {
+      color: white;
+      font-size: 8px;
+      font-family: 'Source Sans 3', sans-serif;
+      font-weight: 400;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    .s-final-timer-colon {
+      color: rgba(255, 255, 255, 0.64);
+      font-size: 20px;
+      font-family: 'Onest', sans-serif;
+      font-weight: 900;
+      margin: 0 2px;
+      margin-top: -10px;
+    }
+
+    /* Розділювач */
+    .s-final-horizontal-divider {
+      width: 100%;
+      height: 1px;
+      background-color: rgba(0,0,0,0.1);
+      margin: 24px 0;
+    }
+
+    /* Іконки переваг */
+    .s-final-features {
+      width: 100%;
+      padding-top: 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .s-final-feature-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      width: 20%; /* 4 колонки */
+    }
+
+    .s-final-feature-item {
+        width: 30%;
+    }
+
+    .s-final-feature-icon {
+      width: 35px;
+      height: 35px;
+      object-fit: contain;
+    }
+
+    .s-final-feature-text {
+      color: black;
+      font-size: 12px;
+      font-family: 'Source Sans 3', sans-serif;
+      font-weight: 600;
+      text-align: center;
+      white-space: nowrap;
+      line-height: 1.2;
+    }
+
+    /* Кнопка */
+    .s-final-btn-wrapper {
+      width: 100%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+
+
+    .s-final-btn {
+      width: 100%;
+      padding: 17px 20px;
+      background: linear-gradient(180deg, #FC8D34 0%, #D55414 100%);
+      box-shadow: 0px 4px 4px rgba(255, 255, 255, 0.25) inset, 0px -4px 4px rgba(255, 255, 255, 0.25) inset, 0px 0px 22.7px #F5C4CA;
+      border-radius: 54px;
+      outline: 2px solid rgba(255, 255, 255, 0.80);
+      outline-offset: -2px;
+      color: white;
+      font-size: 23px;
+      font-family: 'Onest', sans-serif;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.84px;
+      text-align: center;
+      position: relative;
+      z-index: 2;
+      cursor: pointer;
+    }
+
+    /* Trust (Обличчя) */
+    .s-final-trust {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    .s-final-trust-img {
+      max-width: 100%;
+      height: auto;
+      object-fit: contain;
+    }
+
+    @media (max-width: 440px) {
+    .main-wrapper {
+        max-width: 100vw;
+        box-shadow: 0 0 4.673vw rgba(0,0,0,0.1);
+    }
+
+    .s-final {
+        min-height: 221.963vw; 
+        padding-top: 9.346vw;
+    }
+
+    .s-final-thanks {
+        width: 88.785vw;
+        box-shadow: 0vw 0.935vw 1.869vw rgba(0, 0, 0, 0.15);
+        border-radius: 4.673vw;
+        padding: 3.271vw;
+        gap: 0.935vw;
+        margin-bottom: 9.346vw;
+    }
+
+    .s-final-thanks-title {
+        font-size: 4.673vw;
+    }
+
+    .s-final-thanks-desc {
+        font-size: 3.738vw;
+    }
+
+    .s-final-title-black {
+        font-size: 7.009vw;
+    }
+
+    .s-final-title-red {
+        font-size: 14.252vw;
+        margin-top: -1.168vw;
+    }
+
+    .s-final-subtitle {
+        font-size: 4.206vw;
+        margin-top: 1.168vw;
+    }
+
+    .s-final-badge {
+        border-radius: 8.411vw;
+        padding: 1.869vw 4.673vw;
+        font-size: 3.505vw;
+        letter-spacing: 0.28vw;
+        margin-top: 3.505vw;
+    }
+
+    .s-final-offer-card {
+        padding: 7.009vw 5.607vw;
+        margin-top: 84.112vw; 
+        border-top-left-radius: 7.477vw;
+        border-top-right-radius: 7.477vw;
+        box-shadow: 0vw -1.168vw 4.673vw rgba(0,0,0,0.08);
+    }
+
+    .s-final-top-row {
+        border-radius: 4.673vw;
+        padding: 3.505vw 0;
+    }
+
+    .s-final-vertical-divider {
+        width: 0.234vw;
+        height: 14.019vw;
+    }
+
+    .s-final-price-col, .s-final-timer-col {
+        gap: 1.402vw;
+    }
+
+    .s-final-price-label, .s-final-timer-label {
+        font-size: 2.804vw;
+    }
+
+    .s-final-price-main {
+        gap: 2.336vw;
+    }
+
+    .s-final-price-val {
+        font-size: 11.682vw;
+    }
+
+    .s-final-decor {
+        gap: 0.701vw;
+    }
+
+    .s-final-decor-dot {
+        width: 0.935vw;
+        height: 0.935vw;
+        border: 0.234vw solid white;
+    }
+
+    .s-final-decor-line {
+        width: 2.336vw;
+        height: 0.234vw;
+    }
+
+    .s-final-price-sub {
+        font-size: 2.804vw;
+    }
+
+    .s-final-timer-display {
+        gap: 0.935vw;
+    }
+
+    .s-final-timer-group {
+        border-radius: 1.869vw;
+        padding: 1.402vw 1.869vw;
+        min-width: 10.514vw;
+    }
+
+    .s-final-timer-box {
+        font-size: 5.607vw;
+    }
+
+    .s-final-timer-unit {
+        font-size: 1.869vw;
+        margin-top: 0.467vw;
+    }
+
+    .s-final-timer-colon {
+        font-size: 4.673vw;
+        margin: 0 0.467vw;
+        margin-top: -2.336vw;
+    }
+
+    .s-final-horizontal-divider {
+        height: 0.234vw;
+        margin: 5.607vw 0;
+    }
+
+    .s-final-features {
+        padding-top: 7.009vw;
+        gap: 2.336vw;
+        margin-bottom: 5.607vw;
+    }
+
+    .s-final-feature-item {
+        gap: 1.869vw;
+    }
+
+    .s-final-feature-icon {
+        width: 8.178vw;
+        height: 8.178vw;
+    }
+
+    .s-final-feature-text {
+        font-size: 2.804vw;
+    }
+
+    .s-final-btn-wrapper {
+        margin-bottom: 5.607vw;
+    }
+
+    .s-final-btn {
+        padding: 3.972vw 4.673vw;
+        box-shadow: 0vw 0.935vw 0.935vw rgba(255, 255, 255, 0.25) inset, 0vw -0.935vw 0.935vw rgba(255, 255, 255, 0.25) inset, 0vw 0vw 5.304vw #F5C4CA;
+        border-radius: 12.617vw;
+        outline: 0.467vw solid rgba(255, 255, 255, 0.80);
+        outline-offset: -0.467vw;
+        font-size: 5.374vw;
+        letter-spacing: 0.43vw;
+    }
+}
+  </style>
+</head>
+<body>
+
+  <!-- Обгортка для обмеження ширини екрану (до 428px) -->
+  <div class="main-wrapper">
+    
+    <div class="s-final">
+      <!-- Блок "Дякуємо за покупку" -->
+      <div class="s-final-thanks">
+        <div class="s-final-thanks-title">THANK YOU FOR YOUR PURCHASE!</div>
+        <div class="s-final-thanks-desc">Access to your program was sent to your email</div>
+      </div>
+
+      <!-- Головні заголовки -->
+      <div class="s-final-titles">
+        <div class="s-final-title-black">DON’T STOP AT</div>
+        <div class="s-final-title-red">BEGINNER</div>
+        <div class="s-final-subtitle">
+          <span class="font-regular">GET THE FULL </span><span class="font-bold">ZUBALENOK LIBRARY FOR €1</span>
+        </div>
+        <div class="s-final-badge">ALL PROGRAMS. ONE MEMBERSHIP.</div>
+      </div>
+
+      <!-- Блок з таймером, перевагами та кнопкою -->
+      <div class="s-final-offer-card">
+        
+        <!-- Рядок з ціною та таймером -->
+        <div class="s-final-top-row">
+          <!-- Ціна -->
+          <div class="s-final-price-col">
+            <div class="s-final-price-label">YOUR FIRST MONTH:</div>
+            <div class="s-final-price-main">
+              <!-- Декоративні елементи зліва -->
+             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="26" viewBox="0 0 13 26" fill="none">
+  <path d="M11.7322 4.77981L5.64891 0.43457" stroke="white" stroke-width="0.869048" stroke-linecap="round"/>
+  <path d="M11.7322 20.8569L5.64891 25.2021" stroke="white" stroke-width="0.869048" stroke-linecap="round"/>
+  <path d="M10.8632 13.0356L0.869112 12.1665" stroke="white" stroke-width="1.7381" stroke-linecap="round"/>
+</svg>
+              
+              <div class="s-final-price-val">1€</div>
+              
+              <!-- Декоративні елементи справа -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="26" viewBox="0 0 13 26" fill="none">
+  <path d="M0.43457 4.77981L6.5179 0.43457" stroke="white" stroke-width="0.869048" stroke-linecap="round"/>
+  <path d="M0.43457 20.8569L6.5179 25.2021" stroke="white" stroke-width="0.869048" stroke-linecap="round"/>
+  <path d="M1.30365 13.0356L11.2977 12.1665" stroke="white" stroke-width="1.7381" stroke-linecap="round"/>
+</svg>
+            </div>
+            <div class="s-final-price-sub">Then 29€/month from month 2</div>
+          </div>
+
+          <!-- Вертикальна лінія-розділювач -->
+          <div class="s-final-vertical-divider"></div>
+
+          <!-- Таймер -->
+          <div class="s-final-timer-col">
+            <div class="s-final-timer-label">OFFER ENDS IN:</div>
+            <div class="s-final-timer-display">
+              
+              <!-- Прихований блок годин (для JS скрипта) -->
+              <div class="s-final-timer-box" style="display: none;">00</div>
+              
+              <!-- Хвилини -->
+              <div class="s-final-timer-group">
+                <div class="s-final-timer-box">09</div>
+                <div class="s-final-timer-unit">MINUTES</div>
+              </div>
+              
+              <!-- Розділювач (двокрапка) -->
+              <div class="s-final-timer-colon">:</div>
+              
+              <!-- Секунди -->
+              <div class="s-final-timer-group">
+                <div class="s-final-timer-box">59</div>
+                <div class="s-final-timer-unit">SECONDS</div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+
+
+        <!-- Іконки переваг -->
+        <div class="s-final-features">
+          <div class="s-final-feature-item">
+            <img src="./images/15.webp" class="s-final-feature-icon" alt="Programs">
+            <div class="s-final-feature-text">16 programs<br>in one account</div>
+          </div>
+          <svg width="1" height="55" viewBox="0 0 1 55" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path opacity="0.2" d="M0.5 0.5V54.5" stroke="#851D37" stroke-linecap="round" />
+</svg>
+          <div class="s-final-feature-item">
+            <img src="./images/12.webp" class="s-final-feature-icon" alt="Releases">
+            <div class="s-final-feature-text">New releases,<br>guides included</div>
+          </div>
+          <svg width="1" height="55" viewBox="0 0 1 55" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path opacity="0.2" d="M0.5 0.5V54.5" stroke="#851D37" stroke-linecap="round" />
+</svg>
+          <div class="s-final-feature-item s-final-feature-item2">
+            <img src="./images/13.webp" class="s-final-feature-icon" alt="Community">
+            <div class="s-final-feature-text">Community &<br>Karyna's Guidance!</div>
+          </div>
+          <svg width="1" height="55" viewBox="0 0 1 55" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path opacity="0.2" d="M0.5 0.5V54.5" stroke="#851D37" stroke-linecap="round" />
+</svg>
+          <div class="s-final-feature-item">
+            <img src="./images/14.webp" class="s-final-feature-icon" alt="Cancel">
+            <div class="s-final-feature-text">Cancel<br>anytime</div>
+          </div>
+        </div>
+
+        <!-- Кнопка -->
+        <div class="s-final-btn-wrapper">
+          <div class="s-final-btn">START MY MEMBERSHIP</div>
+        </div>
+
+        <!-- Довіра (Faces) -->
+        <div class="s-final-trust">
+          <img src="./images/11.webp" class="s-final-trust-img" alt="Trusted by women">
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- Кінець main-wrapper -->
+
+  <!-- JS для Таймера -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      function start24hTimer(containerSelector, itemSelector, storageKey) {
+        const container = document.querySelector(containerSelector);
+        if (!container) return;
+
+        const values = container.querySelectorAll(itemSelector);
+        if (values.length < 3) return; // Години (приховані), Хвилини, Секунди
+
+        const TOTAL_TIME = 24 * 60 * 60 * 1000; // 24 години
+        let startTime = localStorage.getItem(storageKey);
+
+        if (!startTime) {
+          startTime = Date.now();
+          localStorage.setItem(storageKey, startTime);
+        } else {
+          startTime = parseInt(startTime, 10);
+        }
+
+        function updateTimer() {
+          const now = Date.now();
+          let elapsed = now - startTime;
+
+          if (elapsed >= TOTAL_TIME || elapsed < 0) {
+            startTime = now;
+            localStorage.setItem(storageKey, startTime);
+            elapsed = 0;
+          }
+
+          const remaining = TOTAL_TIME - elapsed;
+
+          const hours = Math.floor(remaining / 3600000);
+          const minutes = Math.floor((remaining % 3600000) / 60000);
+          const seconds = Math.floor((remaining % 60000) / 1000);
+
+          values[0].textContent = String(hours).padStart(2, "0");
+          values[1].textContent = String(minutes).padStart(2, "0");
+          values[2].textContent = String(seconds).padStart(2, "0");
+        }
+
+        updateTimer();
+        setInterval(updateTimer, 1000);
+      }
+
+      start24hTimer(".s-final-timer-display", ".s-final-timer-box", "checkoutFinalTimer");
+    });
+  </script>
+
+</body>
+</html>
